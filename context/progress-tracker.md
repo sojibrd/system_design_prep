@@ -33,6 +33,28 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫_
 - [x] `next build`, `tsc --noEmit`, `eslint app`, `check:diagrams` — চারটাই clean (৪/৪ ডায়াগ্রাম পার্স হয়)
 - [ ] **ব্রাউজারে চোখে দেখে যাচাই** — ডায়াগ্রাম রেন্ডার, dark mode toggle, মোবাইলে scroll
 
+### Mermaid ডায়াগ্রাম — ধাপ ২ (পার্ট ৬, ১১টা case study) ✅ সম্পূর্ণ
+- [x] 6.1.1 WhatsApp Works — HLD flow + sequence (message lifecycle)
+- [x] 6.1.2 WhatsApp Architecture — HLD component + sequence (online/offline alt)
+- [x] 6.1.3 Coffee Shop — HLD + ER + state diagram
+- [x] 6.2.1 YouTube — HLD (upload/playback split) + sequence (async transcode)
+- [x] 6.2.2 Instagram — HLD (read/write split) + flowchart (fan-out write vs read)
+- [x] 6.2.3 Facebook Like Button — HLD + sequence + ER (ধাপ ১-এ)
+- [x] 6.3.1 Google Drive — HLD (pre-signed URL) + ER
+- [x] 6.3.2 Twitter Search — HLD (hot/warm/cold) + sequence (CDC double-write)
+- [x] 6.3.3 URL Shortener — HLD (read-heavy) + flowchart (cache hit/miss)
+- [x] 6.4.1 24 Companies — mindmap (domain→company), roundup তাই HLD/LLD নয়
+- [x] 6.4.2 12 Companies — mindmap (pattern→company), roundup তাই HLD/LLD নয়
+- [x] ২৩টা ডায়াগ্রাম `check:diagrams` পাস, `next build` clean
+
+### Mermaid ডায়াগ্রাম — ধাপ ৩ (পার্ট ১-৫, ২২টা concept ডক) ✅ সম্পূর্ণ
+- [x] পার্ট ১ Networking (৬): URL parts, browser flow, protocol layers, SSH sequence, comm styles, concurrency
+- [x] পার্ট ২ Architecture (৯): mono/micro/serverless, blast radius, patterns mindmap, scaling flow, 1K/1M/10M, scale ladder, tech stack, HLD/LLD, LLD roadmap
+- [x] পার্ট ৩ Databases (২): DB decision tree, sharding mindmap (3.1.1 ধাপ ১-এ)
+- [x] পার্ট ৪ Security (৩): password attacks (2 দল), cyber attacks mindmap, CI/CD gates
+- [x] পার্ট ৫ Advanced (৩): ML lifecycle (retrain loop), roadmap phases, key concepts mindmap
+- [x] **মোট ৪৬টা ডায়াগ্রাম** `check:diagrams` পাস, `next build` clean — ৩৫টা ডকের সবকটিতে অন্তত একটি ডায়াগ্রাম
+
 **নিয়ম যেগুলো ধাপ ২/৩-এ মানতে হবে:** case study ডকে `## High-Level Design` + `## Low-Level Design`; concept ডকে উপরের দিকে একটা diagram; প্রতিটার নিচে ২-৪ লাইন বাংলা ব্যাখ্যা; সর্বোচ্চ ~১২ নোড; প্রতিটা যোগ করা ডায়াগ্রামে `> 📐 ডায়াগ্রাম — নিজের বোঝার জন্য যোগ করা` মার্কার; বিদ্যমান ASCII ফ্লো ছোঁয়া হবে না।
 
 ### ফেজ ১ — MVP (সম্পূর্ণ, Markdown রেন্ডারিং বাদে)

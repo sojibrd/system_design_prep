@@ -118,7 +118,7 @@
 |-------|-------|--------|
 | Sidebar width | `w-[360px]` (lg+) | Left navigation panel |
 | Max content width | `max-w-[1600px]` | Main container |
-| Reading measure | `max-w-[72ch]` | Doc কনটেন্ট প্যারাগ্রাফ |
+| ~~Reading measure~~ | ~~`max-w-[72ch]`~~ | সরানো হয়েছে — Mermaid ডায়াগ্রামের জন্য খুব সরু ছিল; DocContent এখন full-width (দেখুন ui-rules §২) |
 | Page padding | `p-4 md:p-6 lg:p-8` | Responsive body padding |
 | Card padding (sm) | `p-4` | Doc card inner |
 | Card padding (md) | `p-5` | Dashboard cards |

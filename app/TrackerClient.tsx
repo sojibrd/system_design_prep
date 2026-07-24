@@ -162,7 +162,7 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
         <aside
           className={`${
             drawerOpen
-              ? "fixed inset-y-0 left-0 z-50 w-[85%] max-w-[360px] p-4 overflow-y-auto glass-panel animate-slide-in-left"
+              ? "fixed inset-y-0 left-0 z-50 w-[85%] max-w-[360px] p-4 overflow-y-auto bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 shadow-xl animate-slide-in-left"
               : "hidden"
           } lg:static lg:block lg:w-[360px] lg:shrink-0 lg:p-0 lg:bg-transparent lg:shadow-none lg:border-0 lg:backdrop-blur-none`}
         >

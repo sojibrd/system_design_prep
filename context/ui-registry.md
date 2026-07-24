@@ -54,7 +54,7 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫ (ফেজ �
 ### 📋 Sidebar (`<aside>`)
 
 - **Desktop:** `lg:static lg:block lg:w-[360px] lg:shrink-0` — glass বাদ, স্বচ্ছ
-- **Mobile drawer:** `fixed inset-y-0 left-0 z-50 w-[85%] max-w-[360px] glass-panel animate-slide-in-left`
+- **Mobile drawer:** `fixed inset-y-0 left-0 z-50 w-[85%] max-w-[360px] bg-white dark:bg-zinc-950 border-r shadow-xl animate-slide-in-left` — **solid**, glass-panel নয়। কারণ: drawer কনটেন্টের ওপর ভাসে, আর `transform` (slide animation) + `backdrop-filter` একই element-এ থাকলে blur ভেঙে যায় → glass স্বচ্ছ থেকে পেছনের লেখা ভেসে ওঠে
 - **Overlay:** `lg:hidden fixed inset-0 z-40 bg-black/40`, ক্লিকে বন্ধ
 - **Body scroll lock:** drawer খোলা থাকলে `document.body.style.overflow = 'hidden'`
 - **Auto-close:** chapter select করলে drawer বন্ধ
@@ -107,7 +107,7 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫ (ফেজ �
 | ⚪ বাকি | `bg-zinc-200 dark:bg-zinc-800 text-zinc-500` |
 
 #### `<DocContent>` — `app/DocContent.tsx` (expand করলে)
-- **Wrapper:** `max-w-[72ch] text-base bg-zinc-100/50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50`
+- **Wrapper:** `text-base bg-zinc-100/50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50` — full-width (আগে `max-w-[72ch]` ছিল, ডায়াগ্রামের জন্য সরানো হয়েছে)
 - **Props:** `{ content: string }`
 - `react-markdown` + `remark-gfm` (টেবিল, strikethrough, task list)
 - `@tailwindcss/typography` (prose) **ব্যবহার করা হয়নি** — তাহলে রঙ/স্পেসিং প্লাগইনের ডিফল্ট থেকে আসত, `ui-tokens.md` থেকে নয়। প্রতিটা element `components` map-এ নিজেদের টোকেন দিয়ে স্টাইল করা
