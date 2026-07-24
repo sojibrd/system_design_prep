@@ -23,6 +23,18 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫_
 - [x] টেবিল `overflow-x-auto` wrapper-এ — চওড়া টেবিল পেজ scroll করায় না
 - [x] SSR render টেস্টে যাচাই — `<table>`, `<th>`, `<li>` ঠিকমতো তৈরি হয়
 
+### Mermaid ডায়াগ্রাম — ধাপ ১ (রেন্ডারার + ২টা নমুনা)
+- [x] `mermaid` ^11.16.0 ইনস্টল; `jsdom` devDependency (শুধু ডায়াগ্রাম যাচাইয়ের জন্য)
+- [x] `app/MermaidDiagram.tsx` — dynamic import, dark-mode aware, per-diagram error isolation
+- [x] `DocContent.tsx`-এর `pre` handler ```mermaid fence ধরে
+- [x] `scripts/check-diagrams.mjs` + `npm run check:diagrams` — সব mermaid ব্লক পার্স করে দেখে
+- [x] `6.2.3 Facebook Like Button HLD.md` — HLD flowchart + LLD sequence + ER (৩টা)
+- [x] `3.1.1 8 Types of Caching.md` — concept flowchart (১টা)
+- [x] `next build`, `tsc --noEmit`, `eslint app`, `check:diagrams` — চারটাই clean (৪/৪ ডায়াগ্রাম পার্স হয়)
+- [ ] **ব্রাউজারে চোখে দেখে যাচাই** — ডায়াগ্রাম রেন্ডার, dark mode toggle, মোবাইলে scroll
+
+**নিয়ম যেগুলো ধাপ ২/৩-এ মানতে হবে:** case study ডকে `## High-Level Design` + `## Low-Level Design`; concept ডকে উপরের দিকে একটা diagram; প্রতিটার নিচে ২-৪ লাইন বাংলা ব্যাখ্যা; সর্বোচ্চ ~১২ নোড; প্রতিটা যোগ করা ডায়াগ্রামে `> 📐 ডায়াগ্রাম — নিজের বোঝার জন্য যোগ করা` মার্কার; বিদ্যমান ASCII ফ্লো ছোঁয়া হবে না।
+
 ### ফেজ ১ — MVP (সম্পূর্ণ, Markdown রেন্ডারিং বাদে)
 - [x] Navbar — logo + gradient title + progress pill + dark mode toggle + hamburger
 - [x] Sidebar — Part list, chapter buttons, per-part ও per-chapter counter

@@ -13,6 +13,8 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫ (ফেজ �
 | `app/page.tsx` | Root page — `parseWorkbook()` কল করে TrackerClient-এ props পাঠায় | Server Component |
 | `app/TrackerClient.tsx` | সম্পূর্ণ UI (monolithic) | Client Component |
 | `app/DocContent.tsx` | Markdown → React, টোকেন দিয়ে স্টাইল করা | Client Component |
+| `app/MermaidDiagram.tsx` | ```mermaid fence → SVG ডায়াগ্রাম | Client Component |
+| `scripts/check-diagrams.mjs` | সব mermaid ব্লক পার্স করে যাচাই (`npm run check:diagrams`) | Node script |
 | `app/hooks/useLocalStorage.ts` | SSR-safe localStorage state hook | Custom Hook |
 | `app/utils/workbookParser.ts` | Nested Markdown ডিরেক্টরি walk | Utility (server-only) |
 | `app/globals.css` | Design tokens + glass + animation + scrollbar | CSS |
@@ -122,6 +124,15 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫ (ফেজ �
 | inline `code` | `font-mono text-[0.85em] bg-zinc-200/60 dark:bg-zinc-800/60 px-1.5 py-0.5 rounded` |
 | `pre` | `bg-zinc-900 text-zinc-100 dark:bg-black border border-zinc-800 p-5 rounded-2xl overflow-x-auto` |
 | `table` | `overflow-x-auto` wrapper + `rounded-xl border` — চওড়া টেবিল পেজ নয়, নিজের ভেতরে scroll করে |
+| ` ```mermaid ` | `<MermaidDiagram>` — বাধা `pre`-তে দেওয়া, `code`-এ নয় (নাহলে ডায়াগ্রাম কালো code-block-এর ভেতরে আটকা পড়ে) |
+
+#### `<MermaidDiagram>` — `app/MermaidDiagram.tsx`
+- **Props:** `{ chart: string }`
+- **Wrapper:** `my-5 overflow-x-auto rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-900/40 p-4` — টেবিলের মতোই, চওড়া ডায়াগ্রাম পেজ scroll করায় না
+- **Dynamic import** — `mermaid` (~2.5MB) শুধু ডক expand করলে লোড হয়, static import নয়
+- **Dark mode:** `useSyncExternalStore` + MutationObserver `<html>`-এর `.dark` class শোনে → mermaid theme `dark`/`default`-এ re-init। `useEffect` + `setState` নয় (Next 16 lint rule)
+- **SVG বসে `ref.innerHTML` দিয়ে** — mermaid নিজেই SVG string ফেরায়, `securityLevel: "strict"`
+- **Error:** একটা ডায়াগ্রাম ভাঙলে `console.warn` + "⚠️ এই ডায়াগ্রামটি রেন্ডার করা যায়নি।", বাকি ডক অক্ষত
 
 #### `<NotesSection>` (expand করলে)
 - দুটো textarea: `"নিজের ভাষায় সারাংশ (২–৩ লাইনে):"` ও `"যেটা এখনো পরিষ্কার নয়:"`

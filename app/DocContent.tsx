@@ -1,7 +1,25 @@
 "use client";
 
+import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import MermaidDiagram from "./MermaidDiagram";
+
+/**
+ * ```mermaid fence হলে তার ভেতরের সোর্স ফেরায়, নাহলে null।
+ *
+ * react-markdown সবসময় <pre><code class="language-*"> কাঠামো দেয়, তাই
+ * বাধাটা `pre`-তেই দিতে হয় — `code`-এ দিলে ডায়াগ্রামটা <pre>-এর ভেতরে
+ * আটকা পড়ত এবং কালো code-block স্টাইল বয়ে বেড়াত।
+ */
+function extractMermaidSource(children: ReactNode): string | null {
+  if (!isValidElement<{ className?: string; children?: ReactNode }>(children)) {
+    return null;
+  }
+  const { className, children: code } = children.props;
+  if (!className?.includes("language-mermaid")) return null;
+  return typeof code === "string" ? code.trim() : null;
+}
 
 /**
  * Doc-এর Markdown কনটেন্ট রেন্ডার করে।
@@ -70,11 +88,15 @@ const components: Components = {
       </code>
     );
   },
-  pre: ({ children }) => (
-    <pre className="my-4 bg-zinc-900 text-zinc-100 dark:bg-black border border-zinc-800 p-5 rounded-2xl overflow-x-auto">
-      {children}
-    </pre>
-  ),
+  pre: ({ children }) => {
+    const mermaidSource = extractMermaidSource(children);
+    if (mermaidSource) return <MermaidDiagram chart={mermaidSource} />;
+    return (
+      <pre className="my-4 bg-zinc-900 text-zinc-100 dark:bg-black border border-zinc-800 p-5 rounded-2xl overflow-x-auto">
+        {children}
+      </pre>
+    );
+  },
   // চওড়া টেবিল যেন পেজ নয়, নিজের ভেতরে scroll করে
   table: ({ children }) => (
     <div className="my-4 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">

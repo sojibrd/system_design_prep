@@ -82,7 +82,7 @@ index ফাইলের লিংকগুলো ভাঙা ও absolute path
 
 ## ফেজ ৩ — ভবিষ্যৎ (Optional)
 
-- **Diagram রেন্ডারিং** — Mermaid দিয়ে আর্কিটেকচার ডায়াগ্রাম
+- ~~**Diagram রেন্ডারিং** — Mermaid দিয়ে আর্কিটেকচার ডায়াগ্রাম~~ ✅ রেন্ডারার সম্পূর্ণ (`app/MermaidDiagram.tsx`)। কনটেন্ট কাজ চলছে — ধাপ ২: পার্ট ৬-এর ১১টা case study, ধাপ ৩: বাকি ২২টা concept ডক
 - **নিজের কেস স্টাডি যোগ** — workbook-এর বাইরে custom doc
 - **Reading timer** — কোন ডকে কত সময় গেল
 
