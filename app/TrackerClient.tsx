@@ -313,15 +313,25 @@ function DocCard({
   return (
     <div className={`p-4 rounded-2xl border transition-colors ${stateClasses}`}>
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <label className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
+        {/* চেকবক্স ও নাম আলাদা ক্লিক-এলাকা। নামকে `<label>`-এর ভেতরে রাখা
+            যাবে না — তাহলে নামে ক্লিক করলেই "পড়া হয়েছে" toggle হয়ে যায়
+            (ui-rules.md §৪)। */}
+        <div className="flex items-start gap-3 flex-1 min-w-0">
           <input
             type="checkbox"
             checked={isRead}
             onChange={onToggleRead}
-            className="mt-1 size-4 accent-emerald-500 shrink-0"
+            className="mt-1 size-4 accent-emerald-500 shrink-0 cursor-pointer focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+            aria-label={`${doc.name} — পড়া হয়েছে`}
             title="পড়া হয়েছে"
           />
-          <span className="min-w-0">
+          <button
+            type="button"
+            onClick={onToggleExpand}
+            aria-expanded={isExpanded}
+            title={isExpanded ? "বন্ধ করুন" : "পড়ুন"}
+            className="min-w-0 flex-1 text-left cursor-pointer rounded-lg focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+          >
             <span className="font-mono text-[10px] text-zinc-400 mr-2">
               {doc.id}
             </span>
@@ -331,8 +341,8 @@ function DocCard({
                 Source: {doc.source}
               </span>
             )}
-          </span>
-        </label>
+          </button>
+        </div>
 
         <div className="flex items-center gap-2 shrink-0">
           {needsRevise ? (

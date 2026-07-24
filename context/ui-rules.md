@@ -142,10 +142,42 @@ className={isSelected
 - Link/button hover: color shift বা subtle background change
 - Scale effect শুধু icon/badge-এ: `hover:scale-105`
 
+### ⚠️ চেকবক্সের `<label>` কখনো অন্য ক্লিকযোগ্য কনটেন্ট ঘিরবে না
+
+একবার এই বাগ হয়ে গেছে — ডকের নাম চেকবক্সের `<label>`-এর ভেতরে ছিল, তাই নামে
+ক্লিক করলেই "পড়া হয়েছে" toggle হয়ে যেত। ব্যবহারকারী পড়তে চেয়ে ক্লিক করে
+নীরবে নিজের progress ডেটা নষ্ট করত।
+
+```tsx
+// ❌ ভুল — নামে ক্লিক করলেই চেকবক্স toggle হয়
+<label>
+  <input type="checkbox" ... />
+  <span>{doc.name}</span>
+</label>
+
+// ✅ সঠিক — আলাদা ক্লিক-এলাকা, নাম নিজেই একটা button
+<div className="flex items-start gap-3">
+  <input type="checkbox" aria-label={`${doc.name} — পড়া হয়েছে`} ... />
+  <button type="button" onClick={onToggleExpand} aria-expanded={isExpanded}>
+    {doc.name}
+  </button>
+</div>
+```
+
+**সাধারণ নিয়ম:** ধ্বংসাত্মক বা persist-হওয়া action-এর ক্লিক-টার্গেট **ছোট ও
+নির্দিষ্ট** হবে; নিরাপদ action-এর (expand/collapse) টার্গেট বড় হতে পারে।
+ভুল ক্লিকের শাস্তি যেন হালকা হয়।
+
+**ক্লিকযোগ্য টেক্সট সবসময় `<button>` বা `<a>`** — `<div onClick>` নয়, নাহলে
+কীবোর্ড ও স্ক্রিন রিডারে কাজ করে না (§৬)।
+
 ### Expand/Collapse
 - Notes section: `expandedDocId === doc.id` pattern
 - একটাই expand হবে একসাথে (single expand)
-- Toggle label পরিবর্তন: expanded হলে "Collapse ▲", না হলে "নোট / রিভাইজ ▼"
+- খোলা যায় দুই জায়গা থেকে: ডকের নাম, আর ডান পাশের toggle বাটন
+- Toggle label পরিবর্তন: expanded হলে "Collapse ▲", না হলে "পড়ুন / নোট ▼"
+- **ডক খোলা মানে "পড়া হয়েছে" নয়** — auto-mark করবেন না। তাহলে ঠিক সেই
+  অনিচ্ছাকৃত-মার্কিং সমস্যাই নতুন মোড়কে ফিরে আসে। টিক দেওয়া সচেতন সিদ্ধান্ত।
 
 ### Read vs Revise (দুটো আলাদা state)
 - **Read** — checkbox, একবার পড়া হলেই টিক

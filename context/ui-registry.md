@@ -92,7 +92,9 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫ (ফেজ �
   - পড়া হয়েছে → `bg-emerald-500/5 border-emerald-500/20`
   - বাকি → `bg-zinc-100/30 border-zinc-200/60 dark:bg-zinc-900/30 dark:border-zinc-800/60`
 - **Wrapper:** `p-4 rounded-2xl border transition-colors`
-- **বাঁ পাশ:** checkbox (`accent-emerald-500`) + doc ID (`font-mono text-[10px] text-zinc-400`) + নাম (`text-sm font-semibold`) + source (`text-xs italic text-zinc-400`)
+- **বাঁ পাশ — দুটো আলাদা ক্লিক-এলাকা** (একসাথে `<label>`-এ মুড়বেন না, দেখুন `ui-rules.md` §৪):
+  - `<input type="checkbox">` — `accent-emerald-500`, `aria-label="{doc.name} — পড়া হয়েছে"`; শুধু বক্সে ক্লিকেই read toggle
+  - `<button type="button" onClick={onToggleExpand} aria-expanded>` — doc ID (`font-mono text-[10px] text-zinc-400`) + নাম (`text-sm font-semibold`) + source (`text-xs italic`)। ক্লিক করলে ডক খোলে/বন্ধ হয়, read মার্ক **হয় না**
 - **ডান পাশ:** status badge + 🔄 revise বাটন (`disabled` যদি `!isRead`) + expand toggle ("পড়ুন / নোট ▼" / "Collapse ▲")
 
 #### Status badges

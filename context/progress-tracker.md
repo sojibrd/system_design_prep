@@ -89,6 +89,7 @@ _কিছু নেই — ফেজ ০ ও ফেজ ১ সম্পূর�
 | সব index ফাইলে `file:///c:/Users/Sojib Rd/Documents/Projects/...` absolute path | এই মেশিনে (`d:/document-files/...`) লিংক ভাঙা | relative path-এ রূপান্তর |
 | root index-এ পুরনো `context/docs/` ফোল্ডারের লিংক | সেই ফোল্ডার আর নেই — সব `system_design_workbook/`-এ সরানো হয়েছে | পুরনো লিংক মুছুন |
 | `AGENTS.md`-এর context লিংক `DSA_Prep/`-এ পয়েন্ট করত | এজেন্ট ভুল প্রজেক্টের context পড়ত | ✅ সমাধান হয়েছে — এই প্রজেক্টের পাথে আপডেট |
+| ~~ডকের নাম চেকবক্সের `<label>`-এর ভেতরে ছিল~~ | ~~নামে ক্লিক করলেই "পড়া হয়েছে" toggle হতো — নীরবে progress ডেটা নষ্ট~~ | ✅ সমাধান হয়েছে — নাম এখন আলাদা `<button>`, ক্লিকে ডক খোলে। নিয়ম `ui-rules.md` §৪-এ |
 
 ---
 
