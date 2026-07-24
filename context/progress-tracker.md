@@ -6,6 +6,36 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫_
 
 ## ✅ সম্পন্ন কাজ
 
+### ফেজ ০ — ভিত্তি (সম্পূর্ণ)
+- [x] Next.js **16.2.11** + React 19.2 + TypeScript + Tailwind v4 scaffold (Turbopack)
+- [x] Geist Sans + Geist Mono (`next/font/google`)
+- [x] `app/globals.css` — সব design token, `@custom-variant dark`, `.glass-panel`, `.glass-glow`, `animate-slide-in-left`, scrollbar
+- [x] `app/layout.tsx` — metadata ("System Design Workbook"), `lang="bn"`, dark-mode FOUC script
+- [x] `app/hooks/useLocalStorage.ts` — SSR-safe, hydration mismatch এড়ায়
+- [x] `app/utils/workbookParser.ts` — nested directory walk, numeric sort, per-file error skip
+- [x] `app/page.tsx` (Server) + `app/TrackerClient.tsx` (Client)
+- [x] `npx next build` পাস — ৩৫টা ডক পার্স হয়েছে, ১৭টা চ্যাপ্টার sidebar-এ রেন্ডার হয়
+- [x] `npx eslint app` clean (Next 16-এর নতুন react-hooks rule দুবার ধরেছিল, দুটোই ঠিক করা)
+
+### Markdown রেন্ডারিং (সম্পূর্ণ)
+- [x] `react-markdown` ^10.1.0 + `remark-gfm` ^4.0.1 ইনস্টল
+- [x] `app/DocContent.tsx` — সব element নিজেদের টোকেন দিয়ে স্টাইল করা (prose প্লাগইন নয়)
+- [x] টেবিল `overflow-x-auto` wrapper-এ — চওড়া টেবিল পেজ scroll করায় না
+- [x] SSR render টেস্টে যাচাই — `<table>`, `<th>`, `<li>` ঠিকমতো তৈরি হয়
+
+### ফেজ ১ — MVP (সম্পূর্ণ, Markdown রেন্ডারিং বাদে)
+- [x] Navbar — logo + gradient title + progress pill + dark mode toggle + hamburger
+- [x] Sidebar — Part list, chapter buttons, per-part ও per-chapter counter
+- [x] Mobile drawer — slide-in, overlay, body scroll lock, select করলে auto-close
+- [x] Mobile progress dashboard
+- [x] ChapterPanel — breadcrumb + বাংলা title + doc list
+- [x] DocCard — read checkbox, doc ID, source, status badge (✅/🔄/⚪), revise toggle, expand
+- [x] "পড়া হয়েছে" → `sd_read_ids`; unread করলে revise flag-ও মুছে যায়
+- [x] "🔄 রিভাইজ দরকার" → `sd_revise_ids`; না-পড়া ডকে বাটন disabled
+- [x] Per-doc notes (সারাংশ + অস্পষ্ট বিষয়) → `sd_doc_notes`
+- [x] Dark/Light mode → `sd_dark_mode`
+- [x] Overall + per-part + per-chapter progress
+
 ### Content / ডেটা সোর্স
 - [x] `context/system_design_workbook/` — ৬ পার্ট, ১৭ চ্যাপ্টার, ৩৫ ডক
 - [x] প্রতিটা পার্ট ও চ্যাপ্টারের index ফাইল (বাংলা heading সহ)
@@ -23,32 +53,18 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-২৫_
 
 ## 🔄 বর্তমানে চলমান
 
-_কিছু নেই — context ফাইল তৈরি সম্পূর্ণ, ফেজ ০ শুরুর অপেক্ষায়।_
+_কিছু নেই — ফেজ ০ ও ফেজ ১ সম্পূর্ণ। `next build` পাস, `next dev` চলে (Ready in 359ms, `GET / 200`, log-এ কোনো error/warning নেই)।
+ব্রাউজারে **চোখে দেখে** যাচাই এখনো বাকি — dark mode toggle, mobile drawer, localStorage persist, hydration warning।_
 
 ---
 
 ## ⏳ বাকি কাজ
 
-### ফেজ ০ — ভিত্তি (Blocker)
-- [ ] Next.js 15 + TypeScript + Tailwind v4 scaffold
-- [ ] Geist Sans + Geist Mono লোড
-- [ ] `globals.css` — CSS custom properties (design tokens) + `.glass-panel`
-- [ ] `useLocalStorage.ts` hook
-- [ ] `workbookParser.ts` — nested directory walk → `Part[]`
-- [ ] `page.tsx` (Server) + `TrackerClient.tsx` (Client)
-
-### ফেজ ১ — MVP
-- [ ] Navbar (logo + progress pill + dark mode toggle)
-- [ ] Sidebar (part list + chapter buttons + per-part counter)
-- [ ] Doc Panel (Markdown কনটেন্ট রেন্ডার)
-- [ ] "পড়া হয়েছে" checkbox → localStorage
-- [ ] Per-doc notes (সারাংশ + অস্পষ্ট বিষয়)
-- [ ] Dark/Light mode
-- [ ] Overall + per-part progress
-- [ ] Mobile responsive drawer
+### সবচেয়ে জরুরি
+- [ ] **ব্রাউজারে চোখে দেখে যাচাই** — dark mode toggle, mobile drawer, localStorage persist, hydration warning। সার্ভার-সাইড সব clean, কিন্তু আসল ব্রাউজারে দেখা হয়নি
 
 ### ফেজ ২ — High Priority
-- [ ] 🔄 "রিভাইজ দরকার" flag + filter
+- [ ] Revise-only / unread-only filter (flag নিজে হয়ে গেছে, filter বাকি)
 - [ ] Search / Filter
 - [ ] Filter by status (unread / রিভাইজ দরকার)
 - [ ] Interview drill mode
@@ -58,10 +74,10 @@ _কিছু নেই — context ফাইল তৈরি সম্পূর
 - [ ] Export / Import progress (JSON)
 - [ ] Read date tracking
 - [ ] Spaced repetition
-- [ ] Markdown রেন্ডারিং লাইব্রেরি
 - [ ] Syntax highlighting
 - [ ] Confetti
-- [ ] App metadata + favicon
+- [x] App metadata (title + description) ✅
+- [ ] Favicon (এখনো Next.js-এর default)
 
 ---
 

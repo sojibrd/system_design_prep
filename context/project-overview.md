@@ -16,7 +16,7 @@
 
 | লেয়ার | টেকনোলজি |
 |--------|----------|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16.2 (App Router, Turbopack) |
 | Language | TypeScript |
 | Styling | Tailwind CSS v4 |
 | Font | Geist Sans + Geist Mono (next/font) |
@@ -26,6 +26,8 @@
 | Rendering | Server Component (`page.tsx`) + Client Component (`TrackerClient.tsx`) |
 
 > সচেতন সিদ্ধান্ত: DSA Prep Tracker-এর সাথে একই স্ট্যাক ও একই ডিজাইন ভাষা। দুটো অ্যাপ পাশাপাশি ব্যবহার করলে যেন একই জিনিস মনে হয়।
+>
+> ⚠️ **Next 15 নয়, Next 16।** পরিকল্পনায় Next 15 লেখা ছিল, কিন্তু `create-next-app@latest` এখন Next 16.2.11 + React 19.2 দেয়। Next 16-এ breaking change আছে — কোড লেখার আগে `node_modules/next/dist/docs/` পড়ুন (`AGENTS.md`-এও এই নিয়ম আছে)। DSA Prep Tracker Next 15-এ, তাই দুই প্রজেক্টের API হুবহু এক নয়।
 
 ## ডেটা সোর্সের কাঠামো (গুরুত্বপূর্ণ পার্থক্য)
 

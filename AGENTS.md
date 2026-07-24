@@ -56,6 +56,12 @@ Correct anything that is off before we go further.
 
 Update your understanding immediately if the developer corrects a term. Do NOT write, modify, propose, or apply any code changes in any files until the language alignment is fully completed and confirmed by the developer.
 
+<!-- BEGIN:nextjs-agent-rules -->
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+<!-- END:nextjs-agent-rules -->
+
 # Invariants
 
 - Always give response in bangla.

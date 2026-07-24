@@ -2,21 +2,21 @@
 
 ## বর্তমান অবস্থা
 
-**কোনো কোড নেই।** এই রিপোতে এখন পর্যন্ত আছে শুধু:
+**ফেজ ০ ও ফেজ ১ সম্পূর্ণ।** `next build` পাস করে, ৩৫টা ডক পার্স হয়।
+বিস্তারিত ও বাকি কাজের তালিকা `progress-tracker.md`-এ।
 
-- ✅ `context/system_design_workbook/` — ৬ পার্ট, ১৭ চ্যাপ্টার, ৩৫ ডক (ডেটা সোর্স তৈরি)
-- ✅ `AGENTS.md` — এজেন্টের নিয়মাবলী
-- ✅ `context/` — ৬টা context ফাইল (এইমাত্র তৈরি হলো)
+Markdown রেন্ডারিংও হয়ে গেছে (`react-markdown` + `remark-gfm`)।
+`next build` ও `eslint` দুটোই clean।
 
-পরের ধাপ ফেজ ০ — Next.js scaffold।
+পরের ধাপ: ব্রাউজারে চোখে দেখে যাচাই, তারপর ফেজ ২ — search/filter ও interview drill mode।
 
 ---
 
-## ফেজ ০ — ভিত্তি (Priority: Blocker)
+## ফেজ ০ — ভিত্তি ✅ সম্পূর্ণ
 
 | # | কাজ | বিস্তারিত |
 |---|-----|----------|
-| 1 | **Next.js 15 scaffold** | App Router, TypeScript, Tailwind v4, Geist font |
+| 1 | **Next.js scaffold** | ⚠️ পরিকল্পনা ছিল Next 15, বাস্তবে **Next 16.2.11** + React 19.2 (Turbopack)। App Router, TypeScript, Tailwind v4, Geist font |
 | 2 | **`globals.css` টোকেন** | `ui-tokens.md`-এর CSS custom properties + `.glass-panel` |
 | 3 | **`useLocalStorage.ts`** | DSA Prep-এর হুবহু একই hook |
 | 4 | **`workbookParser.ts`** | Directory walk → `Part[]`; index ফাইলের লিংক পার্স করবে **না** |
@@ -34,7 +34,7 @@ index ফাইলের লিংকগুলো ভাঙা ও absolute path
 
 ---
 
-## ফেজ ১ — MVP
+## ফেজ ১ — MVP ✅ সম্পূর্ণ (Markdown রেন্ডারিং বাদে)
 
 | # | ফিচার | বিস্তারিত |
 |---|-------|----------|
@@ -73,7 +73,7 @@ index ফাইলের লিংকগুলো ভাঙা ও absolute path
 
 | # | ফিচার | বিস্তারিত |
 |---|-------|----------|
-| 22 | **Markdown রেন্ডারিং** | `react-markdown` বা `marked` — টেবিল, লিস্ট, inline code |
+| ~~22~~ | ~~**Markdown রেন্ডারিং**~~ | ✅ সম্পূর্ণ — `react-markdown` + `remark-gfm`, `app/DocContent.tsx` |
 | 23 | **Syntax highlighting** | code block-এ Prism.js বা Shiki |
 | 24 | **Confetti** | কোনো part 100% পড়া হলে |
 | 25 | **Metadata** | Title ("System Design Workbook"), favicon, og:image |

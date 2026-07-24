@@ -19,6 +19,12 @@
 - **Persistent state** (read, revise, notes, dark mode): `useLocalStorage` hook
 - Global state management (Redux, Zustand) ব্যবহার করবেন **না** — এই প্রজেক্টে দরকার নেই
 
+### React Compiler (Next 16)
+Next 16-এ React Compiler চালু, তাই:
+- **হাতে `useMemo` / `useCallback` লিখবেন না** — কম্পাইলার নিজেই memoize করে। হাতে লিখলে `react-hooks/preserve-manual-memoization` lint error দেয়
+- **`useEffect`-এর ভেতর `setState` করবেন না** — `react-hooks/set-state-in-effect` error দেয়। external system (localStorage ইত্যাদি) পড়তে `useSyncExternalStore` ব্যবহার করুন
+- কোড লেখার পর `npx eslint app` চালান — build পাস করলেও lint ধরতে পারে
+
 ### Data Flow
 - Props শুধু নিচের দিকে যাবে: `page.tsx → TrackerClient → (sub-components)`
 - Sub-component থেকে parent-এ callback prop দিয়ে communicate করুন
