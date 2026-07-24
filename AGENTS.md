@@ -6,12 +6,12 @@
 
 | #   | File                                                                                  | Purpose                                             |
 | --- | ------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| 1   | [project-overview.md](file:///d:/document-files/DSA_Prep/context/project-overview.md) | Project goals, scope, and high-level architecture   |
-| 2   | [build-plan.md](file:///d:/document-files/DSA_Prep/context/build-plan.md)             | Current build roadmap and implementation phases     |
-| 3   | [progress-tracker.md](file:///d:/document-files/DSA_Prep/context/progress-tracker.md) | What has been done, what is pending, current status |
-| 4   | [ui-tokens.md](file:///d:/document-files/DSA_Prep/context/ui-tokens.md)               | Design tokens — colors, spacing, typography system  |
-| 5   | [ui-rules.md](file:///d:/document-files/DSA_Prep/context/ui-rules.md)                 | UI/UX rules and component usage guidelines          |
-| 6   | [ui-registry.md](file:///d:/document-files/DSA_Prep/context/ui-registry.md)           | Registry of all existing UI components              |
+| 1   | [project-overview.md](context/project-overview.md) | Project goals, scope, and high-level architecture   |
+| 2   | [build-plan.md](context/build-plan.md)             | Current build roadmap and implementation phases     |
+| 3   | [progress-tracker.md](context/progress-tracker.md) | What has been done, what is pending, current status |
+| 4   | [ui-tokens.md](context/ui-tokens.md)               | Design tokens — colors, spacing, typography system  |
+| 5   | [ui-rules.md](context/ui-rules.md)                 | UI/UX rules and component usage guidelines          |
+| 6   | [ui-registry.md](context/ui-registry.md)           | Registry of all existing UI components              |
 
 ### Reading Rules
 
