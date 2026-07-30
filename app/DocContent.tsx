@@ -120,7 +120,7 @@ const components: Components = {
 
 export default function DocContent({ content }: { content: string }) {
   return (
-    <div className="text-base bg-zinc-100/50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50">
+    <div className="text-base bg-zinc-100/50 dark:bg-zinc-900/50 p-3 sm:p-4 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50">
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
         {content}
       </ReactMarkdown>

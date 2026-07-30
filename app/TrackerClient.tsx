@@ -119,7 +119,7 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
           </button>
           <span className="text-xl">🗺️</span>
           <div>
-            <h1 className="text-xl font-extrabold bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">
+            <h1 className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent truncate max-w-[175px] sm:max-w-none">
               System Design Workbook
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 hidden sm:block">
@@ -167,6 +167,19 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
           } lg:static lg:block lg:w-[360px] lg:shrink-0 lg:p-0 lg:bg-transparent lg:shadow-none lg:border-0 lg:backdrop-blur-none`}
         >
           <div className="flex flex-col gap-5">
+            {/* Drawer header — মোবাইলে close button */}
+            <div className="lg:hidden flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+              <span className="text-sm font-bold text-zinc-700 dark:text-zinc-300">বিষয়সূচি</span>
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                title="বন্ধ করুন"
+                className="p-2 rounded-lg hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors text-zinc-500 dark:text-zinc-400"
+              >
+                ✕
+              </button>
+            </div>
+
             {/* Mobile progress dashboard */}
             <div className="lg:hidden glass-panel p-5 rounded-2xl flex items-center gap-4">
               <div className="text-2xl font-extrabold">{percent}%</div>
@@ -200,7 +213,7 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
                             setExpandedDocId(null);
                             setDrawerOpen(false);
                           }}
-                          className={`text-left text-sm px-3 py-2 rounded-lg flex items-center justify-between gap-2 transition-colors focus:ring-1 focus:ring-indigo-500 focus:outline-none ${
+                          className={`text-left text-sm px-3 py-2.5 sm:py-2 rounded-lg flex items-center justify-between gap-2 transition-colors focus:ring-1 focus:ring-indigo-500 focus:outline-none ${
                             isSelected
                               ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-l-2 border-indigo-500"
                               : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
@@ -344,7 +357,7 @@ function DocCard({
           </button>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 w-full sm:w-auto sm:shrink-0 justify-between sm:justify-end">
           {needsRevise ? (
             <span className="text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/10">
               🔄 রিভাইজ দরকার
@@ -368,7 +381,7 @@ function DocCard({
                 ? "রিভাইজ দরকার — টগল করুন"
                 : "আগে পড়ুন, তারপর রিভাইজ মার্ক করা যাবে"
             }
-            className="text-[10px] font-bold px-2 py-1 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors"
+            className="text-[10px] font-bold px-3 py-2 sm:py-1 sm:px-2 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors"
           >
             🔄
           </button>
@@ -376,7 +389,7 @@ function DocCard({
           <button
             type="button"
             onClick={onToggleExpand}
-            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 px-2 py-1 rounded-lg hover:bg-indigo-500/10 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors"
+            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 px-3 py-2 sm:py-1 sm:px-2 rounded-lg hover:bg-indigo-500/10 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors flex-1 sm:flex-none text-center sm:text-left"
           >
             {isExpanded ? "Collapse ▲" : "পড়ুন / নোট ▼"}
           </button>
