@@ -40,20 +40,20 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
 
   const firstChapterId = parts[0]?.chapters[0]?.id ?? "";
   const [selectedChapterId, setSelectedChapterId] = useState(firstChapterId);
-  const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
+  const [readingDocId, setReadingDocId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  // drawer খোলা থাকলে body scroll বন্ধ
+  // drawer বা modal খোলা থাকলে body scroll বন্ধ
   useEffect(() => {
-    document.body.style.overflow = drawerOpen ? "hidden" : "";
+    document.body.style.overflow = drawerOpen || readingDocId !== null ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [drawerOpen]);
+  }, [drawerOpen, readingDocId]);
 
   // Next 16-এ React Compiler চালু — manual `useMemo` লাগে না, কম্পাইলার নিজেই
   // memoize করে। হাতে লিখলে `react-hooks/preserve-manual-memoization` error দেয়।
@@ -65,6 +65,21 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
   const percent = totalDocs === 0 ? 0 : Math.round((readCount / totalDocs) * 100);
 
   const selected = findChapter(parts, selectedChapterId);
+
+  // find currently reading doc info
+  let readingDocInfo: { doc: Doc; part: Part; chapter: Chapter } | null = null;
+  if (readingDocId) {
+    for (const part of parts) {
+      for (const chapter of part.chapters) {
+        const doc = chapter.docs.find((d) => d.id === readingDocId);
+        if (doc) {
+          readingDocInfo = { doc, part, chapter };
+          break;
+        }
+      }
+      if (readingDocInfo) break;
+    }
+  }
 
   function getPartProgress(part: Part) {
     const docs = part.chapters.flatMap((c) => c.docs);
@@ -210,7 +225,6 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
                           type="button"
                           onClick={() => {
                             setSelectedChapterId(chapter.id);
-                            setExpandedDocId(null);
                             setDrawerOpen(false);
                           }}
                           className={`text-left text-sm px-3 py-2.5 sm:py-2 rounded-lg flex items-center justify-between gap-2 transition-colors focus:ring-1 focus:ring-indigo-500 focus:outline-none ${
@@ -268,18 +282,9 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
                       doc={doc}
                       isRead={readIds.includes(doc.id)}
                       needsRevise={reviseIds.includes(doc.id)}
-                      isExpanded={expandedDocId === doc.id}
-                      note={notes[doc.id] ?? {}}
                       onToggleRead={() => toggleRead(doc.id)}
                       onToggleRevise={() => toggleRevise(doc.id)}
-                      onToggleExpand={() =>
-                        setExpandedDocId((prev) =>
-                          prev === doc.id ? null : doc.id,
-                        )
-                      }
-                      onNoteChange={(field, value) =>
-                        updateNote(doc.id, field, value)
-                      }
+                      onOpen={() => setReadingDocId(doc.id)}
                     />
                   ))}
                 </div>
@@ -288,6 +293,22 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
           )}
         </main>
       </div>
+
+      {/* ---------------- Fullscreen Reading Modal ---------------- */}
+      {readingDocInfo && (
+        <ReadingModal
+          doc={readingDocInfo.doc}
+          part={readingDocInfo.part}
+          chapter={readingDocInfo.chapter}
+          isRead={readIds.includes(readingDocInfo.doc.id)}
+          needsRevise={reviseIds.includes(readingDocInfo.doc.id)}
+          note={notes[readingDocInfo.doc.id] ?? {}}
+          onToggleRead={() => toggleRead(readingDocInfo!.doc.id)}
+          onToggleRevise={() => toggleRevise(readingDocInfo!.doc.id)}
+          onNoteChange={(field, val) => updateNote(readingDocInfo!.doc.id, field, val)}
+          onClose={() => setReadingDocId(null)}
+        />
+      )}
     </div>
   );
 }
@@ -298,24 +319,18 @@ interface DocCardProps {
   doc: Doc;
   isRead: boolean;
   needsRevise: boolean;
-  isExpanded: boolean;
-  note: DocNote;
   onToggleRead: () => void;
   onToggleRevise: () => void;
-  onToggleExpand: () => void;
-  onNoteChange: (field: keyof DocNote, value: string) => void;
+  onOpen: () => void;
 }
 
 function DocCard({
   doc,
   isRead,
   needsRevise,
-  isExpanded,
-  note,
   onToggleRead,
   onToggleRevise,
-  onToggleExpand,
-  onNoteChange,
+  onOpen,
 }: DocCardProps) {
   const stateClasses = needsRevise
     ? "bg-amber-500/5 border-amber-500/20"
@@ -326,9 +341,6 @@ function DocCard({
   return (
     <div className={`p-4 rounded-2xl border transition-colors ${stateClasses}`}>
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        {/* চেকবক্স ও নাম আলাদা ক্লিক-এলাকা। নামকে `<label>`-এর ভেতরে রাখা
-            যাবে না — তাহলে নামে ক্লিক করলেই "পড়া হয়েছে" toggle হয়ে যায়
-            (ui-rules.md §৪)। */}
         <div className="flex items-start gap-3 flex-1 min-w-0">
           <input
             type="checkbox"
@@ -340,9 +352,8 @@ function DocCard({
           />
           <button
             type="button"
-            onClick={onToggleExpand}
-            aria-expanded={isExpanded}
-            title={isExpanded ? "বন্ধ করুন" : "পড়ুন"}
+            onClick={onOpen}
+            title="পড়ুন"
             className="min-w-0 flex-1 text-left cursor-pointer rounded-lg focus:ring-1 focus:ring-indigo-500 focus:outline-none"
           >
             <span className="font-mono text-[10px] text-zinc-400 mr-2">
@@ -372,59 +383,172 @@ function DocCard({
             </span>
           )}
 
-          <button
-            type="button"
-            onClick={onToggleRevise}
-            disabled={!isRead}
-            title={
-              isRead
-                ? "রিভাইজ দরকার — টগল করুন"
-                : "আগে পড়ুন, তারপর রিভাইজ মার্ক করা যাবে"
-            }
-            className="text-[10px] font-bold px-3 py-2 sm:py-1 sm:px-2 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors"
-          >
-            🔄
-          </button>
+          {isRead && (
+            <button
+              type="button"
+              onClick={onToggleRevise}
+              title="রিভাইজ দরকার — টগল করুন"
+              className="text-[10px] font-bold px-3 py-2 sm:py-1 sm:px-2 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors"
+            >
+              🔄
+            </button>
+          )}
 
           <button
             type="button"
-            onClick={onToggleExpand}
-            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 px-3 py-2 sm:py-1 sm:px-2 rounded-lg hover:bg-indigo-500/10 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors flex-1 sm:flex-none text-center sm:text-left"
+            onClick={onOpen}
+            className="text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 px-4 py-2 sm:py-1.5 rounded-lg focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors flex-1 sm:flex-none text-center"
           >
-            {isExpanded ? "Collapse ▲" : "পড়ুন / নোট ▼"}
+            পড়ুন 📖
           </button>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {isExpanded && (
-        <div className="mt-4 flex flex-col gap-4">
-          <DocContent content={doc.content} />
+/* ------------------------------------------------------------------ */
 
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              নিজের ভাষায় সারাংশ (২–৩ লাইনে):
-            </label>
-            <textarea
-              value={note.summary ?? ""}
-              onChange={(e) => onNoteChange("summary", e.target.value)}
-              rows={3}
-              className="w-full text-sm p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all resize-y"
-            />
-          </div>
+interface ReadingModalProps {
+  doc: Doc;
+  part: Part;
+  chapter: Chapter;
+  isRead: boolean;
+  needsRevise: boolean;
+  note: DocNote;
+  onToggleRead: () => void;
+  onToggleRevise: () => void;
+  onNoteChange: (field: keyof DocNote, value: string) => void;
+  onClose: () => void;
+}
 
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              যেটা এখনো পরিষ্কার নয়:
-            </label>
-            <textarea
-              value={note.unclear ?? ""}
-              onChange={(e) => onNoteChange("unclear", e.target.value)}
-              rows={3}
-              className="w-full text-sm p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all resize-y"
-            />
-          </div>
+function ReadingModal({
+  doc,
+  part,
+  chapter,
+  isRead,
+  needsRevise,
+  note,
+  onToggleRead,
+  onToggleRevise,
+  onNoteChange,
+  onClose,
+}: ReadingModalProps) {
+  const [showNotes, setShowNotes] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-white dark:bg-zinc-950 animate-slide-up overflow-hidden">
+      {/* Top Header / Breadcrumb */}
+      <header className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-3 bg-zinc-50/80 dark:bg-zinc-900/80 backdrop-blur-md">
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider truncate">
+            {part.id}. {part.name} › {chapter.name}
+          </p>
+          <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 truncate">
+            {doc.id} {doc.name}
+          </h2>
         </div>
-      )}
+        <button
+          type="button"
+          onClick={onClose}
+          className="p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 transition-colors"
+          title="বন্ধ করুন"
+        >
+          ✕
+        </button>
+      </header>
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 max-w-4xl mx-auto w-full">
+        {doc.source && (
+          <p className="text-xs italic text-zinc-400 dark:text-zinc-500 mb-4">
+            Source: {doc.source}
+          </p>
+        )}
+
+        <DocContent content={doc.content} />
+
+        {/* Notes Collapsible Section */}
+        {showNotes && (
+          <div className="mt-6 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 flex flex-col gap-4">
+            <h3 className="text-sm font-bold flex items-center gap-2">
+              📝 ব্যক্তিগত নোট
+            </h3>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                নিজের ভাষায় সারাংশ (২–৩ লাইনে):
+              </label>
+              <textarea
+                value={note.summary ?? ""}
+                onChange={(e) => onNoteChange("summary", e.target.value)}
+                rows={3}
+                className="w-full text-sm p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-all resize-y"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                যেটা এখনো পরিষ্কার নয়:
+              </label>
+              <textarea
+                value={note.unclear ?? ""}
+                onChange={(e) => onNoteChange("unclear", e.target.value)}
+                rows={3}
+                className="w-full text-sm p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-all resize-y"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Floating Action Bar */}
+      <footer className="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-lg flex items-center justify-between gap-2 max-w-4xl mx-auto w-full">
+        <button
+          type="button"
+          onClick={onToggleRead}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-colors ${
+            isRead
+              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+              : "bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+          }`}
+        >
+          <span>{isRead ? "✅ পড়া হয়েছে" : "☐ পড়া হয়েছে?"}</span>
+        </button>
+
+        {isRead && (
+          <button
+            type="button"
+            onClick={onToggleRevise}
+            className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-colors ${
+              needsRevise
+                ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
+                : "border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+            }`}
+            title="রিভাইজ দরকার টগল"
+          >
+            🔄 {needsRevise ? "রিভাইজ" : ""}
+          </button>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setShowNotes((prev) => !prev)}
+          className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-colors ${
+            showNotes || note.summary || note.unclear
+              ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30"
+              : "border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+          }`}
+        >
+          📝 নোট {note.summary || note.unclear ? "•" : ""}
+        </button>
+
+        <button
+          type="button"
+          onClick={onClose}
+          className="py-2.5 px-4 rounded-xl text-xs font-bold bg-zinc-900 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 transition-opacity"
+        >
+          ✕ বন্ধ
+        </button>
+      </footer>
     </div>
   );
 }

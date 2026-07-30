@@ -75,14 +75,13 @@ _সর্বশেষ আপডেট: ২০২৬-০৭-৩০_
 - [x] প্রতিটা পার্ট ও চ্যাপ্টারের index ফাইল (বাংলা heading সহ)
 - [x] `AGENTS.md` — এজেন্ট নিয়মাবলী
 
-### Mobile Responsive Polish (সম্পূর্ণ)
+### Mobile Responsive Polish & Fullscreen Reading Modal (সম্পূর্ণ)
 - [x] `Navbar` — `text-lg sm:text-xl` + `truncate` — 320px স্ক্রিনে title overflow ঠেকানো
 - [x] `Sidebar drawer` — ভেতরে ✕ close button যোগ ("বিষয়সূচি" header)
 - [x] `ChapterButton` — `py-2.5 sm:py-2` — মোবাইলে touch target বাড়ানো
-- [x] `DocCard action row` — `w-full sm:w-auto justify-between sm:justify-end` — মোবাইলে full-width, ঘিঞ্জি হয় না
-- [x] `🔄 button` — `py-2 sm:py-1 px-3 sm:px-2` — বড় tap area
-- [x] `Expand button` — `py-2 sm:py-1 flex-1 sm:flex-none text-center sm:text-left` — মোবাইলে wide tap area
-- [x] `DocContent` — `p-3 sm:p-4` — ছোট স্ক্রিনে reading area একটু বেশি
+- [x] `DocCard` — Inline expansion বদলে **Fullscreen Reading Modal** (পড়ুন 📖 বাটন দিয়ে খোলে)
+- [x] `ReadingModal` — Sticky top breadcrumb + full viewport reading area + collapsible notes section + bottom floating action bar (`☐ পড়া হয়েছে`, `🔄`, `📝 নোট`, `✕ বন্ধ`)
+- [x] `DocContent` — `p-3 sm:p-4` — ছোট স্ক্রিনে reading area সর্বোচ্চ ব্যবহার
 
 ### Context ফাইল
 - [x] `project-overview.md` — লক্ষ্য, স্ট্যাক, ডেটা কাঠামো, ডেটা মডেল
