@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SSH কীভাবে কাজ করে — ভিজ্যুয়াল ওয়াকথ্রু</title>
+<style>
+  :root {
+    --background: #09090b; --foreground: #f4f4f5;
+    --card-bg: rgba(24,24,27,0.6); --card-border: rgba(39,39,42,0.8);
+    --primary: #6366f1; --accent: #22d3ee; --success: #34d399; --muted: #71717a;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--background); color:var(--foreground); font-family:-apple-system,"Segoe UI",Roboto,sans-serif; padding:24px; }
+  .wrap { max-width: 820px; margin: 0 auto; }
+  h1 { font-size:26px; font-weight:800; background:linear-gradient(to right,#6366f1,#a855f7,#22d3ee); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:4px; }
+  .sub { color:var(--muted); font-size:14px; margin-bottom:24px; }
+  .stage {
+    display:grid; grid-template-columns: 1fr 90px 1fr;
+    align-items:center; gap:10px; margin-bottom:14px;
+    padding: 14px; border-radius:16px; border:1px solid var(--card-border); background: var(--card-bg);
+    opacity:0.3; transition: all .4s ease;
+  }
+  .stage.active { opacity:1; border-color:var(--primary); box-shadow:0 0 20px rgba(99,102,241,.15); }
+  .box { background:#18181b; border:1px solid var(--card-border); border-radius:12px; padding:10px 14px; text-align:center; font-weight:700; font-size:14px; }
+  .arrow { text-align:center; font-size:20px; color:var(--accent); }
+  .arrow.rev { transform: scaleX(-1); }
+  .desc { grid-column: 1 / -1; font-size:13px; color:var(--muted); margin-top:8px; text-align:center; }
+  button { background:linear-gradient(to right,#6366f1,#22d3ee); border:none; color:white; font-weight:700; font-size:14px; padding:10px 20px; border-radius:999px; cursor:pointer; margin-top:10px; }
+  button:disabled { opacity:0.4; cursor:not-allowed; }
+  .legend { font-size:13px; color:var(--muted); margin-top:20px; border-left:3px solid var(--accent); padding-left:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SSH কীভাবে কাজ করে</h1>
+  <div class="sub">ওয়ার্কবুক 1.2.2 How SSH Works — key exchange থেকে authenticated shell পর্যন্ত</div>
+
+  <div id="stages"></div>
+  <button id="playBtn">▶ ওয়াকথ্রু চালান</button>
+
+  <div class="legend">
+    <b>মূল আইডিয়া:</b> SSH কখনো পাসওয়ার্ড plaintext-এ পাঠায় না। প্রথমে দুই পক্ষ মিলে একটা shared secret বানায়
+    (Diffie-Hellman key exchange) — এরপর সবকিছু symmetric encryption দিয়ে এনক্রিপ্ট হয়ে যায়। Public-key auth-এ
+    সার্ভার শুধু একটা "চ্যালেঞ্জ" পাঠায়, ক্লায়েন্ট তার private key দিয়ে সেটা সাইন করে প্রমাণ করে — private key কখনো নেটওয়ার্কে যায় না।
+  </div>
+</div>
+
+<script>
+  const stages = [
+    { c: "TCP Connection", s: "শুরুতে সাধারণ TCP handshake (port 22) — SSH এখনো শুরু হয়নি", dir: "->" },
+    { c: "Client: \"SSH-2.0-OpenSSH...\"", s: "উভয় পক্ষ নিজেদের SSH প্রোটোকল ভার্সন জানায়", dir: "<->" },
+    { c: "Key Exchange (Diffie-Hellman)", s: "কোনো secret সরাসরি না পাঠিয়েই দুই পক্ষ একই shared secret বের করে ফেলে (গণিতের কারসাজি)", dir: "<->" },
+    { c: "Session Keys তৈরি", s: "shared secret থেকে symmetric encryption key বানানো হয় — এখন থেকে সব ট্রাফিক এনক্রিপ্টেড", dir: "<->" },
+    { c: "Server চিনিয়ে দেয় নিজের Host Key", s: "ক্লায়েন্ট মেলায় known_hosts-এর সাথে — না মিললে \"WARNING: HOST IDENTIFICATION HAS CHANGED\"", dir: "->" },
+    { c: "Authentication (Public Key)", s: "সার্ভার একটা random challenge পাঠায়, ক্লায়েন্ট নিজের private key দিয়ে সাইন করে ফেরত পাঠায়", dir: "<->" },
+    { c: "Signature যাচাই", s: "সার্ভার client-এর public key (authorized_keys-এ থাকা) দিয়ে signature verify করে — মিললে auth সফল", dir: "<-" },
+    { c: "Encrypted Shell Session শুরু", s: "এখন থেকে টাইপ করা প্রতিটা কমান্ড ও আউটপুট এনক্রিপ্টেড চ্যানেলে যাওয়া-আসা করে", dir: "<->" },
+  ];
+
+  const stagesEl = document.getElementById("stages");
+  stages.forEach((st, i) => {
+    const arrow = st.dir === "->" ? "→" : st.dir === "<-" ? "←" : "⇄";
+    const div = document.createElement("div");
+    div.className = "stage";
+    div.id = "s" + i;
+    div.innerHTML = `
+      <div class="box">Client</div>
+      <div class="arrow">${arrow}</div>
+      <div class="box">Server</div>
+      <div class="desc"><b>${i+1}. ${st.c}</b><br/>${st.s}</div>
+    `;
+    stagesEl.appendChild(div);
+  });
+
+  const playBtn = document.getElementById("playBtn");
+  playBtn.addEventListener("click", () => {
+    playBtn.disabled = true;
+    stages.forEach((_, i) => document.getElementById("s"+i).className = "stage");
+    let i = 0;
+    function tick() {
+      if (i > 0) document.getElementById("s"+(i-1)).classList.remove("active");
+      if (i < stages.length) {
+        document.getElementById("s"+i).classList.add("active");
+        document.getElementById("s"+i).scrollIntoView({behavior:"smooth", block:"center"});
+        i++;
+        setTimeout(tick, 1100);
+      } else {
+        playBtn.disabled = false;
+      }
+    }
+    tick();
+  });
+</script>
+</body>
+</html>

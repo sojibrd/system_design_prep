@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>URL ও Browser Flow — লাইভ ডেমো</title>
+<style>
+  :root {
+    --background: #09090b;
+    --foreground: #f4f4f5;
+    --card-bg: rgba(24,24,27,0.6);
+    --card-border: rgba(39,39,42,0.8);
+    --primary: #6366f1;
+    --accent: #22d3ee;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --muted: #71717a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding: 24px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(to right, #6366f1, #a855f7, #22d3ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 4px;
+  }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    margin-bottom: 20px;
+  }
+  input[type=text] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: #18181b;
+    color: var(--foreground);
+    font-family: "Menlo","Consolas",monospace;
+    font-size: 14px;
+  }
+  .parts { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 10px; margin-top: 16px; }
+  .part {
+    background: #18181b;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .part .label { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); font-weight: 700; }
+  .part .value { font-family: monospace; font-size: 13px; margin-top: 4px; word-break: break-all; min-height: 16px; }
+  .part.empty .value { color: var(--muted); }
+
+  h2 { font-size: 18px; font-weight: 700; margin: 0 0 12px; }
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px; border-radius: 14px;
+    border: 1px solid var(--card-border);
+    background: #18181b;
+    opacity: 0.35;
+    transition: all .35s ease;
+  }
+  .step.active { opacity: 1; border-color: var(--primary); box-shadow: 0 0 20px rgba(99,102,241,.15); }
+  .step.done { opacity: 0.7; border-color: var(--success); }
+  .step .n {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 999px;
+    background: var(--primary); color: white; font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step.done .n { background: var(--success); }
+  .step .t { font-weight: 600; font-size: 14px; }
+  .step .d { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  button {
+    background: linear-gradient(to right, #6366f1, #22d3ee);
+    border: none; color: white; font-weight: 700; font-size: 14px;
+    padding: 10px 20px; border-radius: 999px; cursor: pointer;
+    margin-top: 14px;
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .note {
+    font-size: 13px; color: var(--muted); border-left: 3px solid var(--accent);
+    padding-left: 12px; margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>URL ও Browser Flow</h1>
+  <div class="sub">ওয়ার্কবুক 1.1.1 + 1.1.2 — নিজে টাইপ করে দেখুন, লাইভ ভেঙে দেখাবে</div>
+
+  <div class="card">
+    <h2>১. URL ভেঙে দেখুন</h2>
+    <input type="text" id="urlInput" value="https://user:pass@shop.example.com:8443/products/42?color=red&size=m#reviews" />
+    <div class="parts" id="parts"></div>
+  </div>
+
+  <div class="card">
+    <h2>২. Enter চাপলে ব্রাউজারের ভেতরে কী ঘটে</h2>
+    <div class="steps" id="steps"></div>
+    <button id="playBtn">▶ সিমুলেশন চালান</button>
+    <div class="note">প্রতিটা ধাপ বাস্তবে কতক্ষণ লাগে সেটা সরলীকরণ করে দেখানো হয়েছে — আসল সময় নেটওয়ার্ক, DNS cache, keep-alive connection ইত্যাদির উপর নির্ভর করে অনেক কম-বেশি হতে পারে।</div>
+  </div>
+</div>
+
+<script>
+  const partsDef = [
+    ["scheme", "Scheme", u => u.protocol.replace(":", "")],
+    ["user/pass", "User Info", u => (u.username || u.password) ? `${u.username}:${u.password}` : ""],
+    ["host", "Host", u => u.hostname],
+    ["port", "Port", u => u.port || "(default)"],
+    ["path", "Path", u => u.pathname],
+    ["query", "Query", u => u.search.replace("?", "")],
+    ["fragment", "Fragment", u => u.hash.replace("#", "")],
+  ];
+
+  const partsEl = document.getElementById("parts");
+  const input = document.getElementById("urlInput");
+
+  function render() {
+    partsEl.innerHTML = "";
+    let u;
+    try { u = new URL(input.value); }
+    catch (e) {
+      partsEl.innerHTML = `<div class="part empty"><div class="label">Error</div><div class="value">সঠিক URL লিখুন (scheme:// দিয়ে শুরু করুন)</div></div>`;
+      return;
+    }
+    partsDef.forEach(([key, label, fn]) => {
+      const val = fn(u);
+      const div = document.createElement("div");
+      div.className = "part" + (val ? "" : " empty");
+      div.innerHTML = `<div class="label">${label}</div><div class="value">${val || "—"}</div>`;
+      partsEl.appendChild(div);
+    });
+  }
+  input.addEventListener("input", render);
+  render();
+
+  const stepsDef = [
+    ["DNS Lookup", "hostname → IP address (browser cache → OS cache → resolver → root/TLD/authoritative server)"],
+    ["TCP Handshake", "SYN → SYN-ACK → ACK — সার্ভারের সাথে reliable connection তৈরি"],
+    ["TLS Handshake", "(শুধু https হলে) সার্টিফিকেট যাচাই, encryption key exchange"],
+    ["HTTP Request পাঠানো", "GET /path HTTP/1.1 + headers (cookies, user-agent, ইত্যাদি)"],
+    ["সার্ভার প্রসেস করে", "রাউটিং, ডেটাবেস কোয়েরি, বিজনেস লজিক চালিয়ে রেসপন্স বানায়"],
+    ["HTTP Response আসে", "status code + headers + body (HTML/JSON/...)"],
+    ["ব্রাউজার রেন্ডার করে", "HTML পার্স → DOM তৈরি → CSS/JS লোড → পেজ আঁকা (paint)"],
+  ];
+
+  const stepsEl = document.getElementById("steps");
+  stepsDef.forEach(([t, d], i) => {
+    const div = document.createElement("div");
+    div.className = "step";
+    div.id = "step" + i;
+    div.innerHTML = `<div class="n">${i+1}</div><div><div class="t">${t}</div><div class="d">${d}</div></div>`;
+    stepsEl.appendChild(div);
+  });
+
+  const playBtn = document.getElementById("playBtn");
+  playBtn.addEventListener("click", () => {
+    playBtn.disabled = true;
+    stepsDef.forEach((_, i) => document.getElementById("step"+i).className = "step");
+    let i = 0;
+    function tick() {
+      if (i > 0) document.getElementById("step"+(i-1)).className = "step done";
+      if (i < stepsDef.length) {
+        document.getElementById("step"+i).className = "step active";
+        i++;
+        setTimeout(tick, 650);
+      } else {
+        playBtn.disabled = false;
+      }
+    }
+    tick();
+  });
+</script>
+</body>
+</html>

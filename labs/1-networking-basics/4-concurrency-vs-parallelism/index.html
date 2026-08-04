@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concurrency vs Parallelism — লাইভ ডেমো</title>
+<style>
+  :root {
+    --background:#09090b; --foreground:#f4f4f5;
+    --card-bg: rgba(24,24,27,0.6); --card-border: rgba(39,39,42,0.8);
+    --primary:#6366f1; --accent:#22d3ee; --success:#34d399; --warning:#fbbf24; --muted:#71717a;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--background); color:var(--foreground); font-family:-apple-system,"Segoe UI",Roboto,sans-serif; padding:24px; }
+  .wrap { max-width: 900px; margin:0 auto; }
+  h1 { font-size:26px; font-weight:800; background:linear-gradient(to right,#6366f1,#a855f7,#22d3ee); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:4px; }
+  .sub { color:var(--muted); font-size:14px; margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  .card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:20px; padding:18px; backdrop-filter: blur(12px); }
+  .card h2 { font-size:16px; margin:0 0 6px; }
+  .card p.desc { font-size:12px; color:var(--muted); margin:0 0 12px; min-height: 50px; }
+  button { background:linear-gradient(to right,#6366f1,#22d3ee); border:none; color:white; font-weight:700; font-size:13px; padding:9px 16px; border-radius:999px; cursor:pointer; }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  .spinner-row { display:flex; align-items:center; gap:10px; margin-top:14px; }
+  .spinner { width:20px; height:20px; border-radius:50%; border:3px solid var(--card-border); border-top-color: var(--accent); animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status { font-size:13px; color: var(--muted); }
+  .status.ok { color: var(--success); }
+  input[type=text] {
+    width:100%; margin-top:12px; padding:10px 12px; border-radius:10px;
+    border:1px solid var(--card-border); background:#18181b; color:var(--foreground); font-size:13px;
+  }
+  .hint { font-size:11px; color: var(--muted); margin-top:6px; }
+  .note { font-size:13px; color:var(--muted); margin-top:24px; border-left:3px solid var(--accent); padding-left:12px; }
+  .counter { font-family: monospace; font-size:22px; font-weight:700; color: var(--accent); margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Concurrency vs Parallelism</h1>
+  <div class="sub">ওয়ার্কবুক 1.4.1 — একদিকে main thread ব্লক করে ভারী কাজ, আরেকদিকে Web Worker দিয়ে সমান্তরাল</div>
+
+  <div class="counter" id="tick">⏱ পেজ জীবিত আছে: 0.0s</div>
+  <p class="hint">উপরের কাউন্টারটা প্রতি ১০০ms-এ বাড়ে — যদি এটা থেমে যায়, বুঝবেন main thread ব্লক হয়ে গেছে।
+  ইনপুট বক্সে টাইপ করেও পরীক্ষা করতে পারেন।</p>
+
+  <input type="text" id="typeTest" placeholder="এখানে টাইপ করে দেখুন — ব্লকিং চলাকালীন কি আটকে যায়?" />
+
+  <div class="grid" style="margin-top:20px;">
+    <div class="card">
+      <h2>🔴 Main Thread ব্লক করে (Synchronous)</h2>
+      <p class="desc">একটা ভারী loop সরাসরি main thread-এ চালানো হবে — পুরো পেজ ততক্ষণ জমে থাকবে, কাউন্টার থেমে যাবে, টাইপ করা যাবে না।</p>
+      <button id="blockBtn">▶ ব্লকিং টাস্ক চালান (~2s)</button>
+      <div class="spinner-row"><div class="status" id="blockStatus">প্রস্তুত</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🟢 Web Worker দিয়ে (Parallel)</h2>
+      <p class="desc">একই ভারী কাজ একটা আলাদা থ্রেডে (Web Worker) চালানো হবে — main thread মুক্ত থাকবে, কাউন্টার চলতেই থাকবে, টাইপ করা যাবে স্বাভাবিকভাবে।</p>
+      <button id="workerBtn">▶ Worker-এ চালান (~2s)</button>
+      <div class="spinner-row"><div class="spinner" id="workerSpinner" style="display:none;"></div><div class="status" id="workerStatus">প্রস্তুত</div></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Concurrency</b> মানে একটা থ্রেড অনেকগুলো কাজের মধ্যে দ্রুত সুইচ করে করে সবগুলোকে "এগিয়ে নেওয়া"
+    (যেমন JS event loop — async/await, callbacks)। <b>Parallelism</b> মানে সত্যিকারের একসাথে চালানো —
+    আলাদা CPU core/থ্রেডে (Web Worker, multi-core সার্ভার)। বাম দিকের ডেমো single-thread ব্লক করে দেখায়
+    কেন heavy CPU কাজ main thread-এ করা উচিত নয় — ডান দিকের ডেমো দেখায় worker দিয়ে কীভাবে এটা এড়ানো যায়।
+  </div>
+</div>
+
+<script>
+  // পেজ জীবিত আছে কিনা বোঝার জন্য লাইভ কাউন্টার
+  let start = Date.now();
+  setInterval(() => {
+    document.getElementById("tick").textContent = "⏱ পেজ জীবিত আছে: " + ((Date.now() - start) / 1000).toFixed(1) + "s";
+  }, 100);
+
+  function heavyWork(iterations) {
+    let x = 0;
+    for (let i = 0; i < iterations; i++) {
+      x += Math.sqrt(i) * Math.sin(i);
+    }
+    return x;
+  }
+
+  // ---------- ব্লকিং ডেমো ----------
+  document.getElementById("blockBtn").onclick = (e) => {
+    const btn = e.target;
+    const statusEl = document.getElementById("blockStatus");
+    btn.disabled = true;
+    statusEl.textContent = "চলছে... (পেজ জমে যাবে!)";
+    statusEl.className = "status";
+    // setTimeout দিয়ে UI-কে "চলছে" টেক্সট আঁকার একটু সময় দিচ্ছি, তারপর ব্লক করছি
+    setTimeout(() => {
+      const t0 = performance.now();
+      heavyWork(2_000_000_000 / 1000); // ভারী সিঙ্ক্রোনাস লুপ, main thread ব্লক করবে
+      const t1 = performance.now();
+      statusEl.textContent = `শেষ — ${(t1 - t0).toFixed(0)}ms main thread ব্লক ছিল`;
+      statusEl.className = "status ok";
+      btn.disabled = false;
+    }, 50);
+  };
+
+  // ---------- Worker ডেমো ----------
+  const workerCode = `
+    self.onmessage = function(e) {
+      const n = e.data;
+      let x = 0;
+      for (let i = 0; i < n; i++) { x += Math.sqrt(i) * Math.sin(i); }
+      self.postMessage(x);
+    };
+  `;
+  const blob = new Blob([workerCode], { type: "application/javascript" });
+  const workerUrl = URL.createObjectURL(blob);
+
+  document.getElementById("workerBtn").onclick = (e) => {
+    const btn = e.target;
+    const statusEl = document.getElementById("workerStatus");
+    const spinner = document.getElementById("workerSpinner");
+    btn.disabled = true;
+    spinner.style.display = "block";
+    statusEl.textContent = "Worker-এ চলছে... (main thread মুক্ত, টাইপ করে দেখুন)";
+    const worker = new Worker(workerUrl);
+    const t0 = performance.now();
+    worker.onmessage = () => {
+      const t1 = performance.now();
+      statusEl.textContent = `শেষ — ${(t1 - t0).toFixed(0)}ms লাগলো, কিন্তু main thread কখনো ব্লক হয়নি`;
+      spinner.style.display = "none";
+      btn.disabled = false;
+      worker.terminate();
+    };
+    worker.postMessage(2_000_000_000 / 1000);
+  };
+</script>
+</body>
+</html>
