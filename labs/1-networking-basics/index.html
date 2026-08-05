@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Networking Basics — Hands-on Labs</title>
+<style>
+  :root {
+    --background:#09090b; --foreground:#f4f4f5;
+    --card-bg: rgba(24,24,27,0.6); --card-border: rgba(39,39,42,0.8);
+    --primary:#6366f1; --accent:#22d3ee; --success:#34d399; --warning:#fbbf24; --muted:#71717a;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--background); color:var(--foreground); font-family:-apple-system,"Segoe UI",Roboto,sans-serif; padding:24px; }
+  .wrap { max-width: 800px; margin:0 auto; }
+  h1 { font-size:28px; font-weight:800; background:linear-gradient(to right,#6366f1,#a855f7,#22d3ee); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:4px; }
+  .sub { color:var(--muted); font-size:14px; margin-bottom:28px; }
+  .card {
+    display:block; text-decoration:none; color:inherit;
+    background:var(--card-bg); border:1px solid var(--card-border); border-radius:18px;
+    padding:16px 18px; backdrop-filter: blur(12px); margin-bottom:12px; transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--primary); }
+  .card h2 { font-size:15px; margin:0 0 4px; }
+  .card p { font-size:13px; color:var(--muted); margin:0; }
+  .card .badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; margin-left:8px; vertical-align:middle; }
+  .badge.live { background: rgba(52,211,153,0.15); color: var(--success); }
+  .badge.local { background: rgba(251,191,36,0.15); color: var(--warning); }
+  .local-card { opacity: 0.75; }
+  code { background:#18181b; padding:2px 6px; border-radius:6px; font-size:12px; }
+  h3.section { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin: 24px 0 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Networking Basics — Hands-on Labs</h1>
+  <div class="sub">System Design Prep ওয়ার্কবুকের পার্ট ১ নিয়ে ব্রাউজারে লাইভ চালানো যায় এমন ডেমো</div>
+
+  <h3 class="section">🟢 এখনই ব্রাউজারে চালান</h3>
+
+  <a class="card" href="1-url-and-browser/index.html">
+    <h2>URL ও Browser Flow <span class="badge live">Live</span></h2>
+    <p>URL parser + "টাইপ করলে কী হয়" ধাপে ধাপে সিমুলেশন</p>
+  </a>
+
+  <a class="card" href="2-protocols-and-ssh/ssh-handshake.html">
+    <h2>SSH কীভাবে কাজ করে <span class="badge live">Live</span></h2>
+    <p>Key exchange থেকে authenticated shell পর্যন্ত ভিজ্যুয়াল ওয়াকথ্রু</p>
+  </a>
+
+  <a class="card" href="4-concurrency-vs-parallelism/index.html">
+    <h2>Concurrency vs Parallelism <span class="badge live">Live</span></h2>
+    <p>Main thread blocking vs Web Worker — চোখে দেখে বোঝা</p>
+  </a>
+
+  <h3 class="section">🟡 লোকালি চালাতে হবে (Node.js লাগবে)</h3>
+
+  <div class="card local-card">
+    <h2>TCP vs UDP <span class="badge local">Local only</span></h2>
+    <p>GitHub Pages static hosting — Node সার্ভার চলে না এখানে। রেপো ক্লোন করে চালান:<br/>
+    <code>node labs/1-networking-basics/2-protocols-and-ssh/tcp-vs-udp.js</code></p>
+  </div>
+
+  <div class="card local-card">
+    <h2>Polling vs Long-Polling vs SSE vs Webhook <span class="badge local">Local only</span></h2>
+    <p>এটাও Node সার্ভার লাগে। রেপো ক্লোন করে চালান:<br/>
+    <code>node labs/1-networking-basics/3-communication-styles/server.js</code></p>
+  </div>
+</div>
+</body>
+</html>

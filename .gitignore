@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# labs/-থেকে অটো-কপি হওয়া static ডেমো (scripts/copy-labs.mjs) — সোর্স labs/-এই থাকে
+/public/labs/
+
 # production
 /build
 
