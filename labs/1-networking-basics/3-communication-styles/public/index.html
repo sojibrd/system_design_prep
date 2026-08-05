@@ -33,6 +33,17 @@
   .status-ready { color: var(--success); }
   .status-preparing { color: var(--warning); }
   .note { font-size:13px; color:var(--muted); margin-top:24px; border-left:3px solid var(--accent); padding-left:12px; }
+  .kid-card {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(34,211,238,0.08));
+    border: 1px solid rgba(99,102,241,0.35);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .kid-card .kid-title { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+  .kid-card p { font-size: 15px; margin: 0 0 8px; }
+  .kid-card p:last-child { margin-bottom: 0; }
+  .card .kid { font-size:12px; color: var(--accent); font-weight:600; margin: 0 0 8px; }
 </style>
 </head>
 <body>
@@ -40,9 +51,19 @@
   <h1>Polling vs Long Polling vs SSE vs Webhook</h1>
   <div class="sub">ওয়ার্কবুক 1.3.1 — Network tab (DevTools) খুলে দেখুন request pattern কতটা আলাদা</div>
 
+  <div class="kid-card">
+    <div class="kid-title">🧒 সহজ ভাষায়</div>
+    <p>তুমি গাড়িতে বসে আছো, আম্মুর রান্না হচ্ছে বাসায়। কখন খাবার রেডি হবে জানতে চাও — চারটা ভিন্ন উপায়ে:</p>
+    <p><b>Polling:</b> প্রতি ১ মিনিটে ফোন করে জিজ্ঞেস করা "রেডি হয়েছে?" — বেশিরভাগ বারই উত্তর আসে "না এখনো"।<br/>
+    <b>Long Polling:</b> একবার ফোন করে লাইনে থেকেই অপেক্ষা করা, যতক্ষণ না আম্মু বলে "হ্যাঁ রেডি!"।<br/>
+    <b>SSE:</b> আম্মু ফোনের লাইন খোলাই রেখেছে — রেডি হলেই নিজে থেকে বলে দেবে, তোমাকে জিজ্ঞেস করতেই হবে না।<br/>
+    <b>Webhook:</b> রেস্টুরেন্ট থেকে অর্ডার করেছো, তারা এসএমএস পাঠাবে "আপনার খাবার রেডি" — তুমি একদমই বসে অপেক্ষা করছো না, নিজের কাজ করছো, ওরাই জানাবে।</p>
+  </div>
+
   <div class="grid">
     <div class="card">
       <h2>1️⃣ Polling</h2>
+      <div class="kid">📞 বারবার ফোন করে জিজ্ঞেস করা "রেডি হয়েছে? রেডি হয়েছে?"</div>
       <p class="desc">প্রতি ১.৫ সেকেন্ডে নতুন request পাঠানো হয় — বেশিরভাগ বারই "PREPARING" ফেরত আসে (অপচয়)</p>
       <div class="req-count" id="pollCount">Requests: 0</div>
       <button id="pollBtn">▶ শুরু করুন</button>
@@ -51,6 +72,7 @@
 
     <div class="card">
       <h2>2️⃣ Long Polling</h2>
+      <div class="kid">☎️ একবার ফোন করে লাইনেই থেকে যাওয়া, উত্তর না আসা পর্যন্ত</div>
       <p class="desc">একটা request পাঠানো হয়, সার্ভার "READY" না হওয়া পর্যন্ত ধরে রাখে — তারপর নতুন request</p>
       <div class="req-count" id="lpCount">Requests: 0</div>
       <button id="lpBtn">▶ শুরু করুন</button>
@@ -59,6 +81,7 @@
 
     <div class="card">
       <h2>3️⃣ SSE</h2>
+      <div class="kid">📻 লাইন খোলা রাখা — রেডি হলে ওপাশ থেকেই বলে দেবে</div>
       <p class="desc">একটাই connection খোলা থাকে — সার্ভার নিজে থেকে push করে, নতুন request লাগে না</p>
       <div class="req-count" id="sseCount">Connections: 0</div>
       <button id="sseBtn">▶ কানেক্ট করুন</button>
@@ -67,6 +90,7 @@
 
     <div class="card">
       <h2>4️⃣ Webhook</h2>
+      <div class="kid">📱 রেস্টুরেন্ট থেকে এসএমএস আসবে "খাবার রেডি" — তুমি বসে অপেক্ষা করছোই না</div>
       <p class="desc">একটা ইভেন্ট ট্রিগার করুন ("পেমেন্ট")— সার্ভার নিজে থেকেই ২-৪ সেকেন্ড পর জানাবে</p>
       <div class="req-count" id="whCount">Triggers: 0</div>
       <button id="whBtn">💳 পেমেন্ট ট্রিগার করুন</button>

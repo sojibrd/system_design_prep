@@ -97,12 +97,29 @@
     font-size: 13px; color: var(--muted); border-left: 3px solid var(--accent);
     padding-left: 12px; margin-top: 16px;
   }
+  .kid-card {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(34,211,238,0.08));
+    border: 1px solid rgba(99,102,241,0.35);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .kid-card .kid-title { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+  .kid-card p { font-size: 15px; margin: 0 0 8px; }
+  .kid-card p:last-child { margin-bottom: 0; }
+  .step .kid { font-size: 12px; color: var(--accent); margin-top: 4px; font-weight: 600; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>URL ও Browser Flow</h1>
   <div class="sub">ওয়ার্কবুক 1.1.1 + 1.1.2 — নিজে টাইপ করে দেখুন, লাইভ ভেঙে দেখাবে</div>
+
+  <div class="kid-card">
+    <div class="kid-title">🧒 সহজ ভাষায়</div>
+    <p><b>URL</b> হলো একটা বাড়ির পুরো ঠিকানার মতো — কোন শহর, কোন রাস্তা, কোন বাড়ি নম্বর, কোন দরজা। ঠিকানা ছাড়া চিঠি যেমন পৌঁছায় না, URL ছাড়া ব্রাউজারও জানে না কোথায় যেতে হবে।</p>
+    <p>তুমি যখন ব্রাউজারে ঠিকানা টাইপ করে Enter চাপো, ব্যাপারটা অনেকটা এরকম: প্রথমে বন্ধুকে জিজ্ঞেস করো "এই বাড়িটা কোথায়?" (এটা DNS), তারপর দরজায় গিয়ে টোকা দাও "কেউ আছো?" (এটা হ্যান্ডশেক), তারপর ভেতরে ঢুকে জিনিস চাও (এটা রিকোয়েস্ট), আর মানুষটা জিনিস এনে দেয় (এটা রেসপন্স)।</p>
+  </div>
 
   <div class="card">
     <h2>১. URL ভেঙে দেখুন</h2>
@@ -152,21 +169,21 @@
   render();
 
   const stepsDef = [
-    ["DNS Lookup", "hostname → IP address (browser cache → OS cache → resolver → root/TLD/authoritative server)"],
-    ["TCP Handshake", "SYN → SYN-ACK → ACK — সার্ভারের সাথে reliable connection তৈরি"],
-    ["TLS Handshake", "(শুধু https হলে) সার্টিফিকেট যাচাই, encryption key exchange"],
-    ["HTTP Request পাঠানো", "GET /path HTTP/1.1 + headers (cookies, user-agent, ইত্যাদি)"],
-    ["সার্ভার প্রসেস করে", "রাউটিং, ডেটাবেস কোয়েরি, বিজনেস লজিক চালিয়ে রেসপন্স বানায়"],
-    ["HTTP Response আসে", "status code + headers + body (HTML/JSON/...)"],
-    ["ব্রাউজার রেন্ডার করে", "HTML পার্স → DOM তৈরি → CSS/JS লোড → পেজ আঁকা (paint)"],
+    ["DNS Lookup", "hostname → IP address (browser cache → OS cache → resolver → root/TLD/authoritative server)", "🧑‍🤝‍🧑 বন্ধুকে জিজ্ঞেস করা: \"এই নামের বাড়িটা ঠিক কোথায়?\""],
+    ["TCP Handshake", "SYN → SYN-ACK → ACK — সার্ভারের সাথে reliable connection তৈরি", "🚪 দরজায় টোকা: \"আছো?\" → \"আছি, তুমি?\" → \"আমিও আছি, শুরু করি\""],
+    ["TLS Handshake", "(শুধু https হলে) সার্টিফিকেট যাচাই, encryption key exchange", "🤫 দুজনে মিলে একটা গোপন কোড ভাষা ঠিক করে নেওয়া, যাতে অন্য কেউ শুনতে না পায়"],
+    ["HTTP Request পাঠানো", "GET /path HTTP/1.1 + headers (cookies, user-agent, ইত্যাদি)", "🗣️ দোকানে গিয়ে বলা: \"আমাকে এই জিনিসটা দাও\""],
+    ["সার্ভার প্রসেস করে", "রাউটিং, ডেটাবেস কোয়েরি, বিজনেস লজিক চালিয়ে রেসপন্স বানায়", "📦 দোকানদার গুদাম থেকে জিনিসটা খুঁজে বের করছে"],
+    ["HTTP Response আসে", "status code + headers + body (HTML/JSON/...)", "🎁 দোকানদার জিনিসটা তোমার হাতে দিলো"],
+    ["ব্রাউজার রেন্ডার করে", "HTML পার্স → DOM তৈরি → CSS/JS লোড → পেজ আঁকা (paint)", "🎨 তুমি জিনিসটা খুলে সাজিয়ে দেখছো"],
   ];
 
   const stepsEl = document.getElementById("steps");
-  stepsDef.forEach(([t, d], i) => {
+  stepsDef.forEach(([t, d, kid], i) => {
     const div = document.createElement("div");
     div.className = "step";
     div.id = "step" + i;
-    div.innerHTML = `<div class="n">${i+1}</div><div><div class="t">${t}</div><div class="d">${d}</div></div>`;
+    div.innerHTML = `<div class="n">${i+1}</div><div><div class="t">${t}</div><div class="kid">${kid}</div><div class="d">${d}</div></div>`;
     stepsEl.appendChild(div);
   });
 

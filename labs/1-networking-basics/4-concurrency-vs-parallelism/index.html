@@ -34,12 +34,29 @@
   .hint { font-size:11px; color: var(--muted); margin-top:6px; }
   .note { font-size:13px; color:var(--muted); margin-top:24px; border-left:3px solid var(--accent); padding-left:12px; }
   .counter { font-family: monospace; font-size:22px; font-weight:700; color: var(--accent); margin-top: 8px; }
+  .kid-card {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(34,211,238,0.08));
+    border: 1px solid rgba(99,102,241,0.35);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .kid-card .kid-title { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+  .kid-card p { font-size: 15px; margin: 0 0 8px; }
+  .kid-card p:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Concurrency vs Parallelism</h1>
   <div class="sub">ওয়ার্কবুক 1.4.1 — একদিকে main thread ব্লক করে ভারী কাজ, আরেকদিকে Web Worker দিয়ে সমান্তরাল</div>
+
+  <div class="kid-card">
+    <div class="kid-title">🧒 সহজ ভাষায়</div>
+    <p><b>Concurrency</b>: একজন ওয়েটার একা ৫টা টেবিল সামলাচ্ছে। সে একটা টেবিলে অর্ডার নেয়, পরের টেবিলে গিয়ে পানি দেয়, আবার প্রথম টেবিলে ফিরে যায় — সবাইকেই একটু একটু করে সময় দিচ্ছে, একসাথে না হলেও দ্রুত সুইচ করে করে সবার কাজ এগোচ্ছে।</p>
+    <p><b>Parallelism</b>: ৫ জন ওয়েটার, প্রত্যেকে নিজের একটা করে টেবিল — সবাই সত্যিকারের একসাথে কাজ করছে।</p>
+    <p>নিচে বাম পাশের বাটন হলো "একটামাত্র ওয়েটার, ভারী কাজ করছে বলে বাকি সব টেবিল বসে আছে" — আর ডান পাশেরটা হলো "আরেকজন ওয়েটার (Worker) ডেকে আনা হলো, তাই তুমি নিজে বসে থাকতে হচ্ছে না"।</p>
+  </div>
 
   <div class="counter" id="tick">⏱ পেজ জীবিত আছে: 0.0s</div>
   <p class="hint">উপরের কাউন্টারটা প্রতি ১০০ms-এ বাড়ে — যদি এটা থেমে যায়, বুঝবেন main thread ব্লক হয়ে গেছে।

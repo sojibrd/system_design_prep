@@ -29,12 +29,29 @@
   button { background:linear-gradient(to right,#6366f1,#22d3ee); border:none; color:white; font-weight:700; font-size:14px; padding:10px 20px; border-radius:999px; cursor:pointer; margin-top:10px; }
   button:disabled { opacity:0.4; cursor:not-allowed; }
   .legend { font-size:13px; color:var(--muted); margin-top:20px; border-left:3px solid var(--accent); padding-left:12px; }
+  .kid-card {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(34,211,238,0.08));
+    border: 1px solid rgba(99,102,241,0.35);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .kid-card .kid-title { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+  .kid-card p { font-size: 15px; margin: 0 0 8px; }
+  .kid-card p:last-child { margin-bottom: 0; }
+  .stage .kid { font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 4px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>SSH কীভাবে কাজ করে</h1>
   <div class="sub">ওয়ার্কবুক 1.2.2 How SSH Works — key exchange থেকে authenticated shell পর্যন্ত</div>
+
+  <div class="kid-card">
+    <div class="kid-title">🧒 সহজ ভাষায়</div>
+    <p>ধরো তোমার বন্ধুর একটা গোপন ক্লাবহাউজ আছে। ঢুকতে হলে পাসওয়ার্ড বলতে হয় না — বরং তোমার কাছে একটা বিশেষ <b>জাদু-চাবি</b> থাকে যেটা শুধু তুমিই বানাতে পারো। ক্লাবহাউজ তোমাকে একটা ধাঁধা দেয়, আর তুমি সেই চাবি দিয়ে ধাঁধার উত্তর বানিয়ে দেখাও যে তুমিই আসল তুমি — চাবিটা কখনো হাত থেকে বাইরে যায় না।</p>
+    <p>এই ডেমোতে <b>SSH</b> ঠিক এভাবেই কাজ করে — সবকিছু একটা গোপন কোড ভাষায় বলা হয়, যাতে অন্য কেউ শুনলেও বুঝতে না পারে।</p>
+  </div>
 
   <div id="stages"></div>
   <button id="playBtn">▶ ওয়াকথ্রু চালান</button>
@@ -48,14 +65,14 @@
 
 <script>
   const stages = [
-    { c: "TCP Connection", s: "শুরুতে সাধারণ TCP handshake (port 22) — SSH এখনো শুরু হয়নি", dir: "->" },
-    { c: "Client: \"SSH-2.0-OpenSSH...\"", s: "উভয় পক্ষ নিজেদের SSH প্রোটোকল ভার্সন জানায়", dir: "<->" },
-    { c: "Key Exchange (Diffie-Hellman)", s: "কোনো secret সরাসরি না পাঠিয়েই দুই পক্ষ একই shared secret বের করে ফেলে (গণিতের কারসাজি)", dir: "<->" },
-    { c: "Session Keys তৈরি", s: "shared secret থেকে symmetric encryption key বানানো হয় — এখন থেকে সব ট্রাফিক এনক্রিপ্টেড", dir: "<->" },
-    { c: "Server চিনিয়ে দেয় নিজের Host Key", s: "ক্লায়েন্ট মেলায় known_hosts-এর সাথে — না মিললে \"WARNING: HOST IDENTIFICATION HAS CHANGED\"", dir: "->" },
-    { c: "Authentication (Public Key)", s: "সার্ভার একটা random challenge পাঠায়, ক্লায়েন্ট নিজের private key দিয়ে সাইন করে ফেরত পাঠায়", dir: "<->" },
-    { c: "Signature যাচাই", s: "সার্ভার client-এর public key (authorized_keys-এ থাকা) দিয়ে signature verify করে — মিললে auth সফল", dir: "<-" },
-    { c: "Encrypted Shell Session শুরু", s: "এখন থেকে টাইপ করা প্রতিটা কমান্ড ও আউটপুট এনক্রিপ্টেড চ্যানেলে যাওয়া-আসা করে", dir: "<->" },
+    { c: "TCP Connection", s: "শুরুতে সাধারণ TCP handshake (port 22) — SSH এখনো শুরু হয়নি", dir: "->", kid: "🚪 ক্লাবহাউজের গেটে গিয়ে দাঁড়ানো" },
+    { c: "Client: \"SSH-2.0-OpenSSH...\"", s: "উভয় পক্ষ নিজেদের SSH প্রোটোকল ভার্সন জানায়", dir: "<->", kid: "👋 \"আমি এই ভাষায় কথা বলি, তুমি?\"" },
+    { c: "Key Exchange (Diffie-Hellman)", s: "কোনো secret সরাসরি না পাঠিয়েই দুই পক্ষ একই shared secret বের করে ফেলে (গণিতের কারসাজি)", dir: "<->", kid: "🔮 দুজনে মিলে জাদুমন্ত্রে একটা গোপন সংখ্যা বানিয়ে ফেলা, কাউকে না বলেই" },
+    { c: "Session Keys তৈরি", s: "shared secret থেকে symmetric encryption key বানানো হয় — এখন থেকে সব ট্রাফিক এনক্রিপ্টেড", dir: "<->", kid: "🗝️ সেই গোপন সংখ্যা দিয়ে দুজনেই নিজেদের কোড-চাবি বানিয়ে নিলো" },
+    { c: "Server চিনিয়ে দেয় নিজের Host Key", s: "ক্লায়েন্ট মেলায় known_hosts-এর সাথে — না মিললে \"WARNING: HOST IDENTIFICATION HAS CHANGED\"", dir: "->", kid: "🪪 ক্লাবহাউজ নিজের পরিচয়পত্র দেখালো — তুমি আগেরবারেরটার সাথে মিলিয়ে দেখো" },
+    { c: "Authentication (Public Key)", s: "সার্ভার একটা random challenge পাঠায়, ক্লায়েন্ট নিজের private key দিয়ে সাইন করে ফেরত পাঠায়", dir: "<->", kid: "🧩 ক্লাবহাউজ একটা ধাঁধা দিলো, তুমি তোমার জাদু-চাবি দিয়ে উত্তর বানালে" },
+    { c: "Signature যাচাই", s: "সার্ভার client-এর public key (authorized_keys-এ থাকা) দিয়ে signature verify করে — মিললে auth সফল", dir: "<-", kid: "✅ ক্লাবহাউজ উত্তর মিলিয়ে দেখলো — ঠিক আছে, তুমিই তুমি!" },
+    { c: "Encrypted Shell Session শুরু", s: "এখন থেকে টাইপ করা প্রতিটা কমান্ড ও আউটপুট এনক্রিপ্টেড চ্যানেলে যাওয়া-আসা করে", dir: "<->", kid: "🎉 এবার ভেতরে ঢুকে গোপন কোড ভাষাতেই সব কথা বলা যাবে" },
   ];
 
   const stagesEl = document.getElementById("stages");
@@ -68,7 +85,7 @@
       <div class="box">Client</div>
       <div class="arrow">${arrow}</div>
       <div class="box">Server</div>
-      <div class="desc"><b>${i+1}. ${st.c}</b><br/>${st.s}</div>
+      <div class="desc"><b>${i+1}. ${st.c}</b><div class="kid">${st.kid}</div>${st.s}</div>
     `;
     stagesEl.appendChild(div);
   });
