@@ -155,6 +155,13 @@ export default function TrackerClient({ parts }: TrackerClientProps) {
               />
             </div>
           </div>
+          <a
+            href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/labs/1-networking-basics/index.html`}
+            title="Hands-on Labs — ব্রাউজারে চালানো যায় এমন ডেমো"
+            className="hidden sm:flex items-center gap-1.5 glass-panel px-3 py-1.5 rounded-full text-sm font-medium hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors"
+          >
+            🧪 Labs
+          </a>
           <button
             type="button"
             onClick={() => setDarkMode((prev) => !prev)}
